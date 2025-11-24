@@ -14,18 +14,17 @@ interface ImageData {
 }
 
 interface SuperPixelWallProps {
-  imagePaths: string[];
+  imageSrc: string;
   numImages?: number;
   tileSize?: number;
 }
 
 export default function SuperPixelWall({
-  imagePaths,
-  numImages,
+  imageSrc,
+  numImages = 100,
   tileSize = 32,
 }: SuperPixelWallProps) {
-  // Si no se especifica numImages, usar todas las imágenes del array
-  const totalImages = numImages || imagePaths.length;
+  const totalImages = numImages;
   const [imagesData, setImagesData] = useState<ImageData[]>([]);
   const collapseTargets = useRef<number[]>([]);
   const hoverIndex = useRef<number>(-1);
@@ -41,88 +40,56 @@ export default function SuperPixelWall({
     collapseTargets.current = new Array(totalImages).fill(0.06);
   }, [totalImages]);
 
-  // Cargar todas las imágenes (en paralelo, con límite)
+  // Cargar una sola imagen y repetirla numImages veces
   useEffect(() => {
     let cancelled = false;
 
     async function loadImages() {
       console.log(
-        `[LOAD] Starting to load ${totalImages} images (${imagePaths.length} available)...`
+        `[LOAD] Starting to load 1 image repeated ${totalImages} times...`
       );
 
-      // Usar las imágenes del array proporcionado
-      const selectedPaths = imagePaths.slice(0, totalImages);
+      try {
+        // Cargar la imagen una sola vez
+        const img = new Image();
+        await new Promise<void>((resolve, reject) => {
+          img.onload = () => resolve();
+          img.onerror = (e) => reject(new Error(`Failed to load: ${e}`));
+          img.src = imageSrc;
+        });
 
-      // Generar posiciones aleatorias
-      const positions = generateRandomPositions(totalImages, viewport);
+        const canvas = document.createElement("canvas");
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext("2d")!;
+        ctx.drawImage(img, 0, 0);
 
-      // Cargar imágenes en lotes para no saturar el navegador
-      const BATCH_SIZE = 50;
-      const data: ImageData[] = [];
+        const { tiles, atlas } = await getTilesAndAtlas(canvas, tileSize);
+        const cols = Math.floor(img.width / tileSize);
+        const rows = Math.floor(img.height / tileSize);
 
-      for (let i = 0; i < selectedPaths.length; i += BATCH_SIZE) {
-        if (cancelled) break;
+        // Generar posiciones aleatorias
+        const positions = generateRandomPositions(totalImages, viewport);
 
-        const batch = selectedPaths.slice(i, i + BATCH_SIZE);
-        const batchPromises = batch.map(
-          async (imgPath: string, batchIndex: number) => {
-            const globalIndex = i + batchIndex;
-
-            try {
-              const img = new Image();
-
-              // Usar una Promise para manejar la carga correctamente
-              await new Promise<void>((resolve, reject) => {
-                img.onload = () => resolve();
-                img.onerror = (e) => reject(new Error(`Failed to load: ${e}`));
-                img.src = imgPath;
-              });
-
-              const canvas = document.createElement("canvas");
-              canvas.width = img.width;
-              canvas.height = img.height;
-              const ctx = canvas.getContext("2d")!;
-              ctx.drawImage(img, 0, 0);
-
-              const { tiles, atlas } = await getTilesAndAtlas(canvas, tileSize);
-              const cols = img.width / tileSize;
-              const rows = img.height / tileSize;
-
-              return {
-                tiles,
-                atlas,
-                cols,
-                rows,
-                position: positions[globalIndex].position,
-                scale: positions[globalIndex].scale,
-              };
-            } catch (error) {
-              console.error(
-                `[ERROR] Failed to load image ${imgPath}:`,
-                error instanceof Error ? error.message : error
-              );
-              return null;
-            }
-          }
-        );
-
-        const batchResults = await Promise.all(batchPromises);
-        const validResults = batchResults.filter(
-          (r: ImageData | null): r is ImageData => r !== null
-        );
-        data.push(...validResults);
-
-        console.log(
-          `[LOAD] Batch ${Math.floor(i / BATCH_SIZE) + 1}/${Math.ceil(selectedPaths.length / BATCH_SIZE)} completed (${data.length} images loaded)`
-        );
+        // Crear numImages instancias con los mismos tiles/atlas
+        const data: ImageData[] = positions.map((pos) => ({
+          tiles,
+          atlas,
+          cols,
+          rows,
+          position: pos.position,
+          scale: pos.scale,
+        }));
 
         if (!cancelled) {
-          setImagesData([...data]);
+          setImagesData(data);
+          console.log(`[LOAD] Finished loading ${data.length} instances`);
         }
-      }
-
-      if (!cancelled) {
-        console.log(`[LOAD] Finished loading ${data.length} images`);
+      } catch (error) {
+        console.error(
+          `[ERROR] Failed to load image ${imageSrc}:`,
+          error instanceof Error ? error.message : error
+        );
       }
     }
 
@@ -131,7 +98,7 @@ export default function SuperPixelWall({
     return () => {
       cancelled = true;
     };
-  }, [imagePaths, totalImages, tileSize, viewport]);
+  }, [imageSrc, totalImages, tileSize, viewport]);
 
   // Animación y hover detection centralizada
   useFrame((state, delta) => {
