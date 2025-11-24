@@ -1,9 +1,9 @@
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import { useControls, Leva } from "leva";
-import Scene3D from "../three/Scene3D";
+import MediaPipeTestScene from "../three/scenes/MediaPipeTestScene";
 
-function ScenePage() {
+function MediaPipeTestPage() {
   const { collapse } = useControls({
     collapse: {
       value: 0.5,
@@ -19,10 +19,10 @@ function ScenePage() {
       <Leva />
       <Canvas camera={{ position: [0, 0, 10], fov: 50 }}>
         <OrbitControls />
-        <Scene3D collapse={collapse} />
+        <MediaPipeTestScene collapse={collapse} />
       </Canvas>
     </div>
   );
 }
 
-export default ScenePage;
+export default MediaPipeTestPage;

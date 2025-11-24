@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import * as THREE from "three";
-import { computeTilesAndPermutation } from "../utils/computeTilesAndPermutation";
-import SuperPixelPlane from "./SuperPixelPlane";
+import { computeTilesAndPermutation } from "../../utils/computeTilesAndPermutation";
+import SingleSuperPixelPlane from "../components/SingleSuperPixelPlane";
 
 interface SceneState {
   ready: boolean;
@@ -13,11 +13,11 @@ interface SceneState {
   height: number;
 }
 
-interface Scene3DProps {
+interface MediaPipeTestSceneProps {
   collapse: number;
 }
 
-function Scene3D({ collapse }: Scene3DProps) {
+function MediaPipeTestScene({ collapse }: MediaPipeTestSceneProps) {
   const [state, setState] = useState<SceneState>({
     ready: false,
     imageTexture: null,
@@ -79,7 +79,7 @@ function Scene3D({ collapse }: Scene3DProps) {
   return (
     <>
       <ambientLight />
-      <SuperPixelPlane
+      <SingleSuperPixelPlane
         imageTexture={state.imageTexture}
         permTexture={state.permTexture}
         cols={state.cols}
@@ -93,4 +93,4 @@ function Scene3D({ collapse }: Scene3DProps) {
   );
 }
 
-export default Scene3D;
+export default MediaPipeTestScene;

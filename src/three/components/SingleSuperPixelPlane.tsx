@@ -1,10 +1,10 @@
 import { useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
-import { vertexShader } from "./shaders/superpixel/vertex";
-import { fragmentShader } from "./shaders/superpixel/fragment";
+import { vertexShader } from "../shaders/superpixelBeta/vertex";
+import { fragmentShader } from "../shaders/superpixelBeta/fragment";
 
-interface SuperPixelPlaneProps {
+interface SingleSuperPixelPlaneProps {
   imageTexture: THREE.Texture;
   permTexture: THREE.DataTexture;
   cols: number;
@@ -15,7 +15,7 @@ interface SuperPixelPlaneProps {
   progress: number;
 }
 
-export default function SuperPixelPlane({
+export default function SingleSuperPixelPlane({
   imageTexture,
   permTexture,
   cols,
@@ -24,7 +24,7 @@ export default function SuperPixelPlane({
   texSize,
   threshold,
   progress,
-}: SuperPixelPlaneProps) {
+}: SingleSuperPixelPlaneProps) {
   const meshRef = useRef<THREE.Mesh>(null);
 
   const [uniforms] = useState(() => ({
