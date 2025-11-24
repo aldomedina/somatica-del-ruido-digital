@@ -12,14 +12,17 @@ type pointerPositionType = {
 type handTrackerType = {
   pinchDistance: number;
   setPinchDistance: (value: number) => void;
+  setPointerPosition: (value: pointerPositionType) => void;
+  pointerPosition: pointerPositionType;
 };
 
-function HandTracker({ pinchDistance, setPinchDistance }: handTrackerType) {
+function HandTracker({
+  pinchDistance,
+  setPinchDistance,
+  setPointerPosition,
+  pointerPosition,
+}: handTrackerType) {
   const [webcamOn, setWebcamOn] = useState<boolean>(false);
-  const [pointerPosition, setPointerPosition] = useState<pointerPositionType>({
-    x: 0,
-    y: 0,
-  });
   const webcamRef = useRef(null);
   const canvasRef = useRef(null);
   const mediapipeCamRef = useRef(null);

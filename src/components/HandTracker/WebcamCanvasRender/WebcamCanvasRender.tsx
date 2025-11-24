@@ -61,46 +61,52 @@ function WebcamCanvasRender({
 
         const pinchPoints = [thumbPoint, pointerPoint];
         const pinchConnection: [number, number][] = [[0, 1]];
-        drawConnectors(canvasCtx, pinchPoints, pinchConnection, {
-          color: "#00FF00",
-          lineWidth: 5,
-        });
-        drawLandmarks(canvasCtx, pinchPoints, {
-          color: "#FF0000",
-          lineWidth: 2,
-        });
 
         // Send the data of pinch distance
         const pinchDistance = Math.round(
           Math.hypot(
             thumbPoint.x - pointerPoint.x,
             thumbPoint.y - pointerPoint.y
-          ) * 15
+          ) * 10
         );
-        console.log(thumbPoint, pointerPoint);
-        console.log(pinchDistance);
-        setPinchDistance(pinchDistance);
-      }
-      const rightHandIndex = results.multiHandedness.find(
-        (x: Handedness) => x.label === "Right"
-      );
-      if (rightHandIndex) {
-        const rightHand =
-          results.multiHandLandmarks[
-            results.multiHandLandmarks.length === 1 ? 0 : rightHandIndex.index
-          ];
-        const pointerPoint = rightHand[8];
-        const fingerPoints = [pointerPoint];
-        drawLandmarks(canvasCtx, fingerPoints, {
-          color: "#941db5ff",
+
+        drawLandmarks(canvasCtx, [pointerPoint], {
+          color: "#FF0000",
           lineWidth: 2,
         });
+        if (pinchDistance > 0) {
+          drawConnectors(canvasCtx, pinchPoints, pinchConnection, {
+            color: "#00FF00",
+            lineWidth: 5,
+          });
+        }
 
+        setPinchDistance(pinchDistance);
         setPointerPosition({
           x: Math.round(pointerPoint.x * 100),
           y: Math.round(pointerPoint.y * 100),
         });
       }
+      // const rightHandIndex = results.multiHandedness.find(
+      //   (x: Handedness) => x.label === "Right"
+      // );
+      // if (rightHandIndex) {
+      //   const rightHand =
+      //     results.multiHandLandmarks[
+      //       results.multiHandLandmarks.length === 1 ? 0 : rightHandIndex.index
+      //     ];
+      //   const pointerPoint = rightHand[8];
+      //   const fingerPoints = [pointerPoint];
+      //   drawLandmarks(canvasCtx, fingerPoints, {
+      //     color: "#941db5ff",
+      //     lineWidth: 2,
+      //   });
+
+      //   setPointerPosition({
+      //     x: Math.round(pointerPoint.x * 100),
+      //     y: Math.round(pointerPoint.y * 100),
+      //   });
+      // }
     }
     canvasCtx.restore();
   };
