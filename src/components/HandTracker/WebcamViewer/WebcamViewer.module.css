@@ -1,0 +1,23 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+}
+
+.webcam {
+  margin-left: auto;
+  margin-right: auto;
+  left: 0;
+  right: 0;
+  text-align: center;
+  width: 100%;
+  height: 90vh;
+  display: none;
+  /* visibility: hidden; */
+}
+
+.webcamButton {
+  width: 500px;
+}
