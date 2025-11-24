@@ -1,6 +1,6 @@
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
-import { useControls } from "leva";
+import { useControls, Leva } from "leva";
 import Scene3D from "../three/Scene3D";
 
 function ScenePage() {
@@ -15,7 +15,8 @@ function ScenePage() {
   });
 
   return (
-    <div style={{ height: "100%" }}>
+    <div style={{ height: "100%", position: "relative" }}>
+      <Leva />
       <Canvas camera={{ position: [0, 0, 10], fov: 50 }}>
         <OrbitControls />
         <Scene3D collapse={collapse} />
