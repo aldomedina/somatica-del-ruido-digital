@@ -43,6 +43,8 @@ export default function SuperPixelPlane({ texture }: Props) {
       texWidth: res.texWidth,
       texHeight: res.texHeight,
     });
+
+    // eslint-disable-next-line
   }, [texture, PIXEL_SIZE]);
 
   // Create uniforms, update when perm or texture change
