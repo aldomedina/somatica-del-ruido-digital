@@ -2,11 +2,15 @@ import { Link } from "react-router-dom";
 
 function Home() {
   return (
-    <div>
-      <h1>Cartografias de ...</h1>
-      <Link to="/scene">
-        Explore 3D Scene
-      </Link>
+    <div
+      style={{
+        display: "flex",
+        gap: 48,
+        padding: 32,
+      }}
+    >
+      <Link to="/superpixel">superpixel</Link>
+      <Link to="/media-pipe-test">media-pipe-test</Link>
     </div>
   );
 }
