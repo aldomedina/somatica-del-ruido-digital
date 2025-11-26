@@ -21,7 +21,7 @@ interface SuperPixelWallProps {
 
 export default function SuperPixelWall({
   imageSrc,
-  numImages = 100,
+  numImages = 1000,
   tileSize = 32,
 }: SuperPixelWallProps) {
   const totalImages = numImages;
